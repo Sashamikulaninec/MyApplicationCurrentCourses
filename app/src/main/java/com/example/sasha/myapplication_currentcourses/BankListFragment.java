@@ -62,6 +62,8 @@ public class BankListFragment extends Fragment {
 
 
     public void readFromDb (List list) {
+        mDBHelper = new DBHelper(getActivity(), "Bank.db", null, 1);
+
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         String MY_QUERY = "SELECT * FROM " +
                 SQLParams.ORG_TABLE_NAME;
