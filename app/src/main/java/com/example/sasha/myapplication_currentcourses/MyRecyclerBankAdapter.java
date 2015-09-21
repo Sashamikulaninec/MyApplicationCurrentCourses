@@ -45,7 +45,6 @@ public class MyRecyclerBankAdapter extends RecyclerView.Adapter<MyRecyclerBankAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView orgType;
         TextView title;
         TextView regionId;
         TextView cityId;
@@ -55,7 +54,6 @@ public class MyRecyclerBankAdapter extends RecyclerView.Adapter<MyRecyclerBankAd
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            orgType = (TextView) itemView.findViewById(R.id.org_type);
             title = (TextView) itemView.findViewById(R.id.org_title);
             regionId = (TextView) itemView.findViewById(R.id.region_id);
             cityId = (TextView) itemView.findViewById(R.id.city_id);

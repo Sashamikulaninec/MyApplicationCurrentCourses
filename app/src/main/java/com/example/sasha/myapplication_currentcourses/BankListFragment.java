@@ -31,10 +31,11 @@ public class BankListFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Organizations> mData;
+    Organizations organizations;
+
     private ProgressBar progressBar;
     private DBHelper mDBHelper;
     public static final String TAG = "w";
-    private Organizations organizations;
 
 
 
@@ -62,11 +63,11 @@ public class BankListFragment extends Fragment {
 
 
     public void readFromDb (List list) {
+
         mDBHelper = new DBHelper(getActivity(), "Bank.db", null, 1);
 
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        String MY_QUERY = "SELECT * FROM " +
-                SQLParams.ORG_TABLE_NAME;
+        String MY_QUERY = "SELECT * FROM " + SQLParams.ORG_TABLE_NAME;
 
         Cursor c = db.rawQuery(MY_QUERY, null);
         int titleIndex = c.getColumnIndex(SQLParams.COLUMN_TITLE);
