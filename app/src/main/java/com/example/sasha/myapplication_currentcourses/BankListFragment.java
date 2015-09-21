@@ -1,5 +1,6 @@
 package com.example.sasha.myapplication_currentcourses;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 import com.example.sasha.myapplication_currentcourses.db.DBHelper;
 import com.example.sasha.myapplication_currentcourses.db.SQLParams;
+import com.example.sasha.myapplication_currentcourses.model.Currencies;
 import com.example.sasha.myapplication_currentcourses.model.Organizations;
 
 import org.json.JSONObject;
@@ -34,22 +36,14 @@ public class BankListFragment extends Fragment {
     public static final String TAG = "w";
     private Organizations organizations;
 
-    public static JSONObject jsonObject;
-    public static JSONObject getJsonObject() {
-        return jsonObject;
-    }
+
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.bank_list_fragment, null);
-        List<Organizations> list = new ArrayList<Organizations>();
-        progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        AsyncJSON loader = new AsyncJSON(getActivity(), progressBar);
-        loader.execute(AsyncJSON.SERVER_URL);
 
-        // TODO readFromDB(list), mData;
-        mData = list;
+        mData = getData();
         mLayoutManager = new GridLayoutManager(getActivity(), 1);
         mAdapter       = new MyRecyclerBankAdapter(getActivity(), mData);
         mRecyclerView  = (RecyclerView) v.findViewById(R.id.rvList);
@@ -58,9 +52,36 @@ public class BankListFragment extends Fragment {
         return v;
     }
 
+    public List<Organizations> getData() {
+
+        List<Organizations> list = new ArrayList<Organizations>();
+        readFromDb(list);
+
+        return list;
+    }
 
 
+    public void readFromDb (List list) {
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        String MY_QUERY = "SELECT * FROM " +
+                SQLParams.ORG_TABLE_NAME;
 
+        Cursor c = db.rawQuery(MY_QUERY, null);
+        int titleIndex = c.getColumnIndex(SQLParams.COLUMN_TITLE);
+        int regionIdIndex = c.getColumnIndex(SQLParams.COLUMN_REG_ID);
+        int cityIdIndex = c.getColumnIndex(SQLParams.COLUMN_CITY_ID);
+        int phoneIndex = c.getColumnIndex(SQLParams.COLUMN_PHONE);
+        int addressIndex = c.getColumnIndex(SQLParams.COLUMN_ADDRESS);
+        int linkIndex = c.getColumnIndex(SQLParams.COLUMN_LINK);
+        c.moveToFirst();
+        while (c.moveToNext()) {
+            organizations = new Organizations(c.getString(titleIndex), c.getString(regionIdIndex), c.getString(cityIdIndex), c.getString(phoneIndex), c.getString(addressIndex), c.getString(linkIndex));
+            list.add(organizations);
+
+        }
+        db.close();
+
+    }
 
 
 }

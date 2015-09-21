@@ -1,31 +1,64 @@
 package com.example.sasha.myapplication_currentcourses;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.sasha.myapplication_currentcourses.db.DBHelper;
 
 
 public class MainActivity extends FragmentActivity {
     BankListFragment bankListFragment;
-    public DBHelper dbHelper;
+    private DBHelper mDBHelper;
+    AsyncJSON loader;
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (isNetworkConnected() == true) {
+            progressBar = (ProgressBar) findViewById(R.id.progress);
 
-        bankListFragment  = new BankListFragment();
+            AsyncJSON loader = new AsyncJSON(this,progressBar);
+            mDBHelper = new DBHelper(this, "Bank.db", null, 1);
+
+            loader.execute(AsyncJSON.SERVER_URL);
 
 
-        android.support.v4.app.FragmentManager fragMan = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction ft  = fragMan.beginTransaction();
-        ft.add(R.id.fragment2, bankListFragment);
-        ft.commit();
+        }else {
+            Toast.makeText(this,"Please turn on wifi", Toast.LENGTH_LONG).show();
+        }
+            bankListFragment = new BankListFragment();
+
+            android.support.v4.app.FragmentManager fragMan = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = fragMan.beginTransaction();
+            ft.add(R.id.fragment2, bankListFragment);
+            ft.commit();
+
+
+    }
+
+    private boolean isNetworkConnected() {
+
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+
+            return false;
+        } else
+            return true;
+
+
     }
 
 
@@ -47,4 +80,5 @@ public class MainActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
